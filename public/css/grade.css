@@ -1,0 +1,30 @@
+body{
+	font-family: "Microsoft YaHei";
+}
+.container1{
+	background: -webkit-linear-gradient(#3C5368, #123455); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient(#3C5368, #123455); /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient(#3C5368, #123455); /* Firefox 3.6 - 15 */
+    background: linear-gradient(#3C5368, #123455); /* 标准的语法（必须放在最后） */
+    width: 100%;
+    padding: 10% 5% 5% 5%;
+}
+.container{
+    background: rgba(52,54,66,.9);
+    width: 100%;
+    padding: 10% 5% 5% 5%;
+}
+input[type="number"]{
+		background-color:#eee;
+}
+input[type="button"]{
+	outline:none;
+	/*background: red;*/
+}
+input[type="button"]:focus{
+	outline:none;
+	/*background: red;*/
+}
+.text-info{
+	color:#fff;
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>登录与注册</title>
+<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+<link rel="Shortcut Icon" href="favicon.ico">
+<style type="text/css">
+*{margin:0;padding:0;list-style-type:none;}
+a,img{border:0;}
+body{font:12px/180% Arial, Helvetica, sans-serif, "新宋体";}
+</style>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/loginSignup.js"></script>
+
+</head>
+
+<body>
+	<div class="cd-user-modal is-visible"> 
+		<div class="theme">
+			Technology Share Platform
+		</div>
+		<br />
+		<div class="cd-user-modal-container">
+			<ul class="cd-switcher">
+				<li><a href="#0" class="selected">用户登录</a></li>
+				<li><a href="#0" >注册新用户</a></li>
+			</ul>
+
+			<div id="cd-login" class="is-selected"> <!-- 登录表单 -->
+				<div class="cd-form" >
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signin-username">用户名</label>
+						<input class="full-width has-padding has-border" id="signin-username" type="text" placeholder="输入用户名">
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signin-password">密码</label>
+						<input class="full-width has-padding has-border" id="signin-password" type="password"  placeholder="输入密码">
+					</p>
+
+					<p class="fieldset">
+						<input type="checkbox" id="remember-me" checked>
+						<label for="remember-me">记住登录状态</label>
+						<label for="errors" id="error"></label>
+					</p>
+
+					<p class="fieldset">
+						<input id="login" class="full-width2" type="submit" value="登 录">
+					</p>
+				</div>
+			</div>
+
+			<div id="cd-signup"> <!-- 注册表单 -->
+				<div class="cd-form" >
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">用户名</label>
+						<input class="full-width has-padding has-border" id="signup-username" type="text" placeholder="输入用户名" name="username">
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signup-password">密码</label>
+						<input class="full-width has-padding has-border" id="signup-password" type="password"  placeholder="输入密码" name="password">
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-nickName">真实姓名</label>
+						<input class="full-width has-padding has-border" id="signup-nickName" type="text" placeholder="输入真实姓名" name="nickName">
+					</p>
+					<p class="fieldset">
+						<input type="checkbox" id="accept-terms" checked="true">
+						<label for="accept-terms">我已阅读并同意 <a href="" data-toggle="modal" data-target="#myModal">用户协议</a></label>
+						<label for="accept-terms" id="register_error"></label>
+
+					</p>
+
+					<p class="fieldset">
+						<input class="full-width2" type="submit" id="register" value="注册新用户">
+					</p>
+				</div>
+			</div>
+
+	
+
+		</div>
+	</div> 
+<div style="text-align:center;">
+<!-- 模态框（Modal） -->
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel">
+				用户协议
+			</h3>
+		</div>
+		<div class="modal-body">
+			<p>1、本应用程序仅供IT部内部培训记录使用</p>
+			<p>2、注册需要填写用户名、密码和真实姓名</p>
+			<p>3、注册成为用户之后尽量保持参加培训</p>
+			<p>4、培训的主讲人拥有指定一下位的权利</p>
+			<p>5、参与培训的观众拥有一次打分的权利</p>
+		</div>
+		<div class="modal-footer">
+			 <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+		</div>
+</div>
+</div>
+
+
+
+<script type="text/javascript">
+	$("input").focus(function(){
+	  $("input").css("border","1px solid #666");
+	  $("#error").html("");
+	  $("#register_error").html("");
+
+	});
+	//登录操作
+	$("#login").on('click',function(){
+		
+		//获取数据
+		var username = $("#signin-username").val().trim();
+		var password = $("#signin-password").val().trim();
+		//数据判断
+
+		if(username ===""){
+			$("#signin-username").css("border","1px solid red");
+			$("#error").html("用户名不能为空！");
+			return fasle;
+		}else if(password ===""){
+			$("#signin-password").css("border","1px solid red");
+			$("#error").html("密码不能为空！");
+			return fasle;
+		}
+		if(username !=="" && password !==""){
+					//发送请求
+					 $.ajax({
+				            type:'POST',
+				            url:'/index/login',
+				            data:{
+				                username:username,
+				                password:password,
+				            },
+				            success:function(result){
+				            	console.log(result);
+				            	if(result.code ==="0"){
+				            		$("#error").html(result.msg);
+				            		$("#signin-username").css("border","1px solid red");
+				            	}else if(result.code === "2"){
+									$("#error").html(result.msg);
+									$("#signin-password").css("border","1px solid red");
+				            	}
+				            	if(result.code === "1"){
+				            		window.location = result.msg+"?user="+result.user;
+				            	}
+				            },
+				            error:function(){
+				                $("#error").html("网络错误");
+				            },
+				            complete:function(){
+				                // console.log("complete");
+				            }
+				        });
+		}
+
+
+		});
+
+	//注册操作
+	$("#register").on('click',function(){
+		
+		//获取数据
+		var username = $("#signup-username").val().trim();
+		var password = $("#signup-password").val().trim();
+		var nickName = $("#signup-nickName").val().trim();
+		//数据判断
+		if(username ===""){
+			$("#signup-username").css("border","1px solid red");
+			$("#register_error").html("用户名不能为空！");
+			return fasle;
+		}else if(password ===""){
+			$("#signup-password").css("border","1px solid red");
+			$("#register_error").html("密码不能为空！");
+			return fasle;
+		}else if(nickName ===""){
+			$("#signup-password").css("border","1px solid red");
+			$("#register_error").html("真实姓名不能为空！");
+			return fasle;
+		}
+		if(username !==""&&password !==""&&nickName !==""){
+		//发送请求
+		 $.ajax({
+	            type:'POST',
+	            url:'/index/register',
+	            data:{
+	                username:username,
+	                password:password,
+	                nickName:nickName
+	            },
+	            success:function(result){
+	            //0表示该账号被注册，1表示注册成功,2表示注册失败,3表示数据库的问题
+	            	console.log(result);
+	            	if(result.code ==="0"){
+	            			$("#register_error").html(result.msg);
+	            			$("#signup-username").css("border","1px solid red");
+	            	}else if(result.code === "2"){
+						$("#register_error").html(result.msg);
+						$("#signup-username").css("border","1px solid red");
+	            	}else if(result.code === "1"){
+	            		var time = 3;
+	            		// console.log(time);
+						var intervalid = setInterval(function(){
+							if(time==0){
+								location.reload();
+								clearInterval(intervalid); 
+							}
+							$("#register_error").html(result.msg+"请在"+time--+"s后登录...");
+							$("#register_error").css("color","green");
+						}, 1000); 
+	            	}
+	            },
+	            error:function(){
+	                $("#error").html("网络错误");
+	            },
+	            complete:function(){
+	                // console.log("complete");
+	            }
+	        });
+		}
+		
+		});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>错误</title>
+	<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+	<style>
+		#error{
+			text-align: center;
+			color: red;
+		}
+	</style>
+
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+</head>
+<body>
+	<h1><%= message %></h1>
+	<h2><%= error.status %></h2>
+
+	<pre><%= error.stack %></pre>
+
+	
+	<h1 id="error"></h1>
+	<h2 style="text-align: center;"><a href="/index">点此处快速回到主页</a></h2>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+
+		var time = 3;
+		// console.log(time);
+		var intervalid = setInterval(function(){
+			if(time==0){
+				location.href="/";
+				clearInterval(intervalid); 
+			}
+			$("#error").html("错误页面"+""+time--+"s后返回主页...");
+
+		}, 1000); 
+
+</script>

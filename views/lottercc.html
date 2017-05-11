@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+    <title>抽取</title>
+    <mate charset="utf-8"></mate>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0,user-scalable=no">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/table.css" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/vue.js"></script>
+<style>
+
+</style>
+</head>
+<body>
+<div class="container">
+    <h4>您好，<span id="user" class="text-primary"><%= user%></span></h4>
+    <h5 class="text-success"><strong>您是本次培训的主讲人,请指定下一次主讲人</strong></h5>
+    <br>
+    <div class="row">
+        <table class="table table-bordered table-hover">    
+            <tr class="text-danger">
+                <td class="text-center">序号</td>
+                <td class="text-center">操作</td>
+                <td class="text-center">用户名</td>
+                <td class="text-center">名字</td>
+            </tr>
+            <tr v-for="(item,index) in myData" class="background">
+                <td class="text-center">{{index+1}}</td>
+                <td class="text-center">
+                    <button class="btn btn-success btn-sm"
+                        v-on:click="success(index)"
+                        data-toggle="dialog" data-target="#layer"
+                    >选取</button>
+                </td>
+                <td class="text-center">{{item.user_name}}</td>  
+                <td class="text-center">{{item.true_name}}</td>
+
+            </tr>
+
+            <tr v-show="myData.length==0">
+                <td colspan="5" class="text-center">
+                    <p>暂无数据</p>
+                </td>
+            </tr>
+            <tr v-show="myData.length!=0">
+                <td colspan="4" class="text-center">
+                    <button v-on:click="randomOne()" class="btn btn-success btn-sm">随机选择一个</button>
+                </td>
+            </tr>
+            <tr v-show="myData.length!=0">
+                <td colspan="4" class="text-right">
+                    <button v-on:click="select()" class="btn btn-success btn-sm" id="selsect">确认选取</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+        window.onload = function(){
+
+            //获取值
+            var data = JSON.parse('<%- JSON.stringify(users)%>');//转义字符串
+
+
+            // var data = <%=users%>;
+            // console.log(data.data);
+            //创建实例对象 
+            var vm = new Vue({
+                el:'.container',
+                data:{
+                    myData:data.data
+                },
+                methods:{
+
+                    //随机生成一个
+                    randomOne:function(){
+                        var length =this.myData.length;
+                        var num =Math.ceil(Math.random()*length);
+                        var trs = document.getElementsByTagName("tr");
+                        for(var i=1;i < trs.length;i++){
+                            trs[i].style.backgroundColor="#334971";
+                        }
+                        trs[num].style.backgroundColor="green";
+                    },
+                    // 指定
+                    success:function(index){
+                        var trs = document.getElementsByTagName("tr");
+                        for(var i=0;i<trs.length;i++){
+                            trs[i].style.backgroundColor="#334971";
+                        }
+                        trs[index+1].style.backgroundColor="green";
+                    },
+                    select:function(){//确认选取
+                        
+                        var username;
+                        var truename;
+                        var trs = document.getElementsByTagName("tr");
+                         console.log(this.myData);
+                        for(var i=1; i < trs.length;i++){
+                            // console.log(trs[i].style.backgroundColor);rgb(51, 73, 113)
+                            if(trs[i].style.backgroundColor ==="green"){
+                                username=this.myData[i-1].user_name;
+                                truename=this.myData[i-1].true_name;
+                            }
+                        }
+                        //获取数据
+                        // console.log(username);
+                        // 发送请求
+                        if(username){
+                            $.ajax({
+                                type:"POST",
+                                url:"/lottery",
+                                data:{
+                                        user_name:username,
+                                        true_name:truename
+                                    },
+                                    success:function(result){
+                                        console.log(result);
+                                        if(result.code==="1"){
+                                            alert(result.msg);
+                                            $("#selsect").html("指定完成");
+                                            $("#selsect").attr("disabled",true);
+                                        }else{
+                                            alert(result.msg);
+                                        }
+       
+                                    },
+                                    error:function(){
+                                        // $("#error").html("网络错误");
+                                    },
+                                    complete:function(){
+                                        // console.log("complete");
+                                    }
+                            })
+                        }else{
+                            alert("还没有选取人员!");
+                        }
+                    }
+
+                }
+            });
+
+
+        }        
+    </script>
+</body>
+</html>

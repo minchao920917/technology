@@ -1,0 +1,60 @@
+body,html{
+    margin: 0 auto;
+    padding: 0;
+}
+*{
+    font-family: "Microsoft Yahei";
+}
+
+        .container{
+
+            background:#99CCCC;
+            width: 100%;
+            padding: 10% 5% 5% 5%;
+        }
+#lottery{
+    width: 100%;
+    height: 100%;
+    padding: 20% 5% 40% 5%;
+    margin: 0 auto;
+}
+#lottery .text-people{
+    color: #fafafa;
+}
+    #scratch {
+        width: 100%;
+        height: 100%;
+        margin: 0px auto 0;
+        position: relative;
+    }
+    #scratch #card {
+        height: 100%;
+        height: 100%;
+        font-weight: bold;
+        font-size: 40px;
+        line-height: 100px;
+        text-align: center;
+        background: #FAFAFA;
+        -webkit-user-select:none; 
+        -moz-user-select:none; 
+        -ms-user-select:none; 
+        user-select:none;
+    }
+    #scratch #card .bingo-tip{
+        padding: 3rem 1rem 0 1rem;
+    }
+    #scratch #card .bingo-people{
+        padding: 0 1rem 3rem 1rem;
+        display: inline-block;
+        color: #d26dea;
+        background-image: -webkit-gradient(linear, 0 0, 0 bottom, from(rgba(0, 128, 0, 1)), to(rgba(51, 51, 51, 1)));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    #cover{
+         position: absolute; 
+         width: 100%;
+         height: 100%;
+         top:0; 
+         left:0;
+     }

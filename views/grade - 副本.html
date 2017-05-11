@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>打分页面</title>
+	<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0,user-scalable=no">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/grade.css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+</head>
+<body>
+
+	<div class="container">
+		<h4>
+			<span class="text-primary">您好，</span><span id="user" class="text-primary"><%= user%></span>
+		</h4>
+		<h5 class="text-primary"><strong>您是本次培训的观众,请给本次培训的主讲人打分</strong></h5>
+		<h3 class="text-info"><span>本期主讲人：</span><span ><%= master%></span></h3>
+		<h3 class="text-info"><span>本期主题：</span><%= topic%></h3>
+		<br>
+
+		<div class="row" style="padding: 20px;">
+			<label class="text-info"><stong>请打分：</stong></label>
+			<div class="">
+				<input type="number" name="score" id="score" class="form-control">
+			</div>
+		</div>
+
+		
+		<input type="button" name="" value="打分" id="grade" class="btn btn-primary btn-block">
+		<br>
+		<h4 class="text-danger text-center" id="error"></h4>
+		<br>
+		<h5 class="text-info"><storng>评分规则：</storng></h5>
+		<h5><small>1、所打分数只能在0~10之间</small></h5>
+		<h5><small>2、每次课只能打一次分，请给出客观的分数</small></h5>
+	</div>
+
+	<script type="text/javascript">
+		$("#grade").on('click',function(){
+		
+		//获取数据
+		var score = parseInt($("#score").val().trim());
+		var user_name = $("#user").html();
+
+		//数据判断
+		// console.log(score);
+		if(score>=0&&score<=10){
+			//通过判断发送请求
+			 $.ajax({
+		            type:'POST',
+		            url:'/grade',
+		            data:{
+		                username:user_name,
+		                score:score
+		            },
+		            success:function(result){
+		            	// console.log(result);
+		            	if(result.code ==="1"){//打分成功
+		            		$("#grade").val(result.msg);
+							$("#score").css("border","1px solid green");
+							$('#score').attr("disabled",true);
+							$('#grade').attr("disabled",true);
+		            	}else if(result.code ==="1"){//打分失败
+		            		$("#score").html(result.msg);
+		            	}else if(result.code ==="3"){
+		            		$("#error").html(result.msg);
+		            		$('#score').attr("disabled",true);
+							$('#grade').attr("disabled",true);
+		            	}
+		            },
+		            error:function(){
+		                // $("#error").html("网络错误");
+		            },
+		            complete:function(){
+		                // console.log("complete");
+		            }
+		        });
+			
+		}else if(isNaN(score)){
+			$("#error").html("错误：需要输入一个整数");
+		}else{
+			
+			$("#error").html("错误：评分需要在0到10之间");
+		}
+
+		});
+	$("#score").focus(function(){
+
+	  $("#error").html("");
+
+	});
+	</script>
+
+</body>
+</html>

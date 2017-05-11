@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>打分页面</title>
+	<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0,user-scalable=no">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/grade.css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<style type="text/css">
+ #box{position: relative;height: 50px;margin:  50px auto 0;}
+ #bg{height: 10px; margin-top: 19px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden;}
+ #bgcolor{background: #5889B2; width: 0; height: 10px; border-radius: 5px;}
+ #bt{width: 10px; height: 26px; background: url(/img/j.png) no-repeat center center; border-radius: 5px; overflow: hidden; position: absolute; left: 0px; margin-left: 0px; top: -8px; cursor: pointer;}
+ #text{ margin: 0 auto;line-height: 2em;}
+</style>
+</head>
+<body>
+
+	<div class="container">
+		<h4>
+			<span class="text-info">您好，</span><span id="user" class="text-info"><%= user%></span>
+		</h4>
+		<h3 class="text-info"><span>本期主讲人：</span><span ><%= master%></span></h3>
+		<h3 class="text-info"><span>本期主题：</span><%= topic%></h3>
+		<br>
+		<div class="text-center" >
+			<h3 class="text-info"><span id="text">0</span> &nbsp;分</h3>
+		</div>
+
+		 <div id="box">
+		  <div id="bg">
+		   <div id="bgcolor"></div>
+		  </div>
+		  <div id="bt"></div>
+		 </div>
+		 
+		<input type="button" name="" value="确定打分" id="grade" class="btn btn-primary btn-block">
+		<br>
+		<h4 class="text-danger text-center" id="error"></h4>
+		<br>
+		<h5 class="text-info"><storng>评分规则：</storng></h5>
+		<h5><small>1、所打分数只能在0~10之间</small></h5>
+		<h5><small>2、每次课只能打一次分，请给出客观的分数</small></h5>
+	</div>
+
+	<script type="text/javascript">
+
+$(function(){
+
+	function isPC() {
+        var userAgentInfo = navigator.userAgent,
+            Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"],
+            flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+            return flag;
+    };
+
+	var $box = $('#box'), $bg = $('#bg'), $bgcolor = $('#bgcolor'), $btn = $('#bt'), $text = $('#text');
+  	var statu = false, ox = 0 , lx = 0, left = 0, bgleft = 0;
+
+  	if(isPC()){
+	$btn.mousedown(function(e){
+	    lx = $btn.offset().left;
+	    ox = e.pageX - left;
+	    statu = true;
+	   });
+	   $(document).mouseup(function(){
+	    statu = false;
+	   });
+	   $box.mousemove(function(e){
+	   	var width = $bg.width();
+	   	// console.log(e);
+	   	// console.log(e.pageX);
+	    if(statu){
+	     left = e.pageX - ox;
+	     if(left < 0){
+	      left = 0;
+	     }
+	     if(left > width){
+	      left = width;
+	     }
+	     $btn.css('left',left);
+	     $bgcolor.width(left);
+	     $text.html(parseInt((left/width)*10) + '');
+	    }
+	   });
+  	}else{
+  		$btn.bind('touchstart',function(e){
+  			lx = $btn.offset().left;
+  			// console.log(e);
+		   	ox = e.originalEvent.targetTouches[0].screenX - left;
+		    statu = true;
+
+  		});
+  		$(document).bind('touchend',function(){
+ 			statu = false;
+  		});
+		$(window).bind('touchmove',function(e){
+			var width = $bg.width();
+			// document.addEventListener("touchmove",function(e){
+	
+				e.preventDefault();
+				e.stopPropagation();
+				// });
+			// console.log(e.originalEvent.targetTouches[0].screenX);
+		    if(statu){
+		     left = e.originalEvent.targetTouches[0].screenX - ox;
+		     if(left < 0){
+		      left = 0;
+		     }
+		     if(left > width){
+		      left = width;
+		     }
+		     $btn.css('left',left);
+		     $bgcolor.width(left);
+		     $text.html(parseInt((left/width)*10) + '');
+		    }
+		});
+
+  	}
+
+   $bg.click(function(e){
+   	var width = $bg.width();
+    if(!statu){
+     bgleft = $bg.offset().left;
+     left = e.pageX - bgleft;
+     if(left < 0){
+      left = 0;
+     }
+     if(left > width){
+      left = width;
+     }
+     $btn.css('left',left);
+     $bgcolor.stop().animate({width:left},200);
+     $text.html(parseInt((left/width)*10) + '');
+    }
+   });
+})
+
+
+
+		$("#grade").on('click',function(){
+		
+		//获取数据
+		var score = $("#text").html();
+		var user_name = $("#user").html();
+console.log(score+","+user_name);
+		//数据判断
+		// console.log(score);
+
+			//通过判断发送请求
+			 $.ajax({
+		            type:'POST',
+		            url:'/grade',
+		            data:{
+		                username:user_name,
+		                score:score
+		            },
+		            success:function(result){
+		            	// console.log(result);
+		            	if(result.code ==="1"){//打分成功
+		            		$("#grade").val(result.msg);
+							$("#score").css("border","1px solid green");
+							$('#score').attr("disabled",true);
+							$('#grade').attr("disabled",true);
+		            	}else if(result.code ==="1"){//打分失败
+		            		$("#score").html(result.msg);
+		            	}else if(result.code ==="3"){
+		            		$("#error").html(result.msg);
+		            		$('#score').attr("disabled",true);
+							$('#grade').attr("disabled",true);
+		            	}
+		            },
+		            error:function(){
+		                // $("#error").html("网络错误");
+		            },
+		            complete:function(){
+		                // console.log("complete");
+		            }
+		        });
+			
+
+		});
+	$("#score").focus(function(){
+
+	  $("#error").html("");
+
+	});
+	</script>
+
+</body>
+</html>

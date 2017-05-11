@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+    <title>抽取</title>
+    <mate charset="utf-8"></mate>
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0,user-scalable=no">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/table.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/lucky-card.js"></script> 
+    <script type="text/javascript" src="/js/layer.js"></script> 
+</head>
+<body>
+<div class="container">
+
+    <div class="row " id="lottery">
+        <h4 class="text-people">您好，<strong id="user" class=""><%= user%></strong></h4>
+        <h4 class="text-people">请刮卡指定下一次主讲人</h4>
+        <br>
+        <div id="scratch">
+            <div id="card">
+                <h4 class="bingo-tip text-center">恭喜您，中奖的人是:</h4>
+                <h2 class="bingo-people text-center"><strong id="name"></strong></h2>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+$(function(){
+    var data = JSON.parse('<%- JSON.stringify(users)%>');//转义字符串
+    
+    var myData = data.data;
+    // console.log(myData);
+    var length =myData.length;
+    var num =Math.ceil(Math.random()*length-1);
+    var username = myData[num].user_name;
+    var truename = myData[num].true_name;
+    // console.log(num-1);
+    // console.log(truename);
+    $("#name").html(truename);
+
+    LuckyCard.case({
+        ratio: .5
+    }, function() {
+        
+        this.clearCover();
+        //询问框
+        layer.confirm("您确定选中"+truename+"？", {
+          btn: ['确定','再选一下'] //按钮
+        }, function(){//确定提交
+         
+            $.ajax({
+                    type:"POST",
+                    url:"/lottery",
+                    data:{
+                            user_name:username,
+                            true_name:truename
+                        },
+                        success:function(result){
+                            console.log(result);
+                            if(result.code==="1"){
+                               
+                                layer.msg(result.msg,{icon: 1});
+                            }else{
+                                layer.msg(result.msg,{icon: 2});
+                            }
+
+                        },
+                        error:function(){
+                            // $("#error").html("网络错误");
+                        },
+                        complete:function(){
+                            // console.log("complete");
+                        }
+                });
+
+        }, function(){//再选一下
+            window.location.reload();
+        });
+        
+    });
+});
+
+</script>  
+</body>
+</html>
